@@ -5,6 +5,7 @@ import { Home } from "../screens/Home";
 import { Information } from "../screens/Information";
 import Settings from "../screens/Settings";
 import Contact from "../screens/Contact";
+import { HomeScreen } from "../screens/HomeScreen";
 
 const Tab = createBottomTabNavigator();
 
@@ -54,6 +55,16 @@ export default function TabNavigator() {
       <Tab.Screen
         name="Opciones"
         component={Settings}
+        options={{
+          tabBarIcon: ({ color, size }) => (
+            <Icon name="cog" color={color} size={size} />
+          ),
+          headerShown: false,
+        }}
+      />
+      <Tab.Screen
+        name="HomeScreen"
+        component={HomeScreen}
         options={{
           tabBarIcon: ({ color, size }) => (
             <Icon name="cog" color={color} size={size} />
