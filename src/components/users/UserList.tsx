@@ -7,7 +7,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { UserDetailModal } from "./UserDetailModal";
 
 // Constants
-const BASE_URL = "http://192.168.0.4:3000";
+const BASE_URL = "http://192.168.0.6:3000";
 const UPLOADS_FOLDER = "users";
 const AVATAR_FALLBACK_URL =
   "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR-SnDtnoTbs_JJtNW62ALeA4gKPtpCGcQ5CnVEJNNAddxjuLwrbo1c16rExrxYL4xLmIw&usqp=CAU";

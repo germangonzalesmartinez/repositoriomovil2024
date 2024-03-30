@@ -14,6 +14,7 @@ import {
 import { RadioGroup } from "react-native-radio-buttons-group";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
+import * as ImagePicker from "expo-image-picker";
 
 export const Home = ({ navigation }) => {
   // Declaración de variables y métodos para modificar su valor inicial
@@ -23,6 +24,9 @@ export const Home = ({ navigation }) => {
   const [selectedIdRadioButton, setSelectedIdRadioButton] = useState("");
   const [userName, setUserName] = useState("");
   const [userEmail, setUserEmail] = useState("");
+  const [userPassword, setUserPassword] = useState("");
+  const [avatar, setAvatar] = useState("");
+  const [selectedRole, setSelectedRole] = useState("");
 
   const gender = useMemo(
     () => [
@@ -35,6 +39,23 @@ export const Home = ({ navigation }) => {
         id: "2",
         label: "Masculino",
         value: "Masculino",
+      },
+    ],
+    []
+  );
+
+  // Radio button para rol
+  const user_role = useMemo(
+    () => [
+      {
+        id: "1",
+        label: "Admin",
+        value: "Admin",
+      },
+      {
+        id: "2",
+        label: "Usuario",
+        value: "Usuario",
       },
     ],
     []
@@ -69,6 +90,39 @@ export const Home = ({ navigation }) => {
     }
   };
 
+  // Función para la selección de la imagen
+  const selectAvatar = async () => {
+    try {
+      const permissionResult =
+        await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+      if (!permissionResult.granted) {
+        alert(
+          "La aplicación necesita permisos para acceder a la galería de imágenes."
+        );
+        return;
+      }
+
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 1,
+      });
+
+      if (result.cancelled) {
+        console.log("Selección de imagen cancelada");
+        return;
+      }
+
+      if (result && result.uri) {
+        setAvatar(result.uri);
+      }
+    } catch (error) {
+      console.log("Error al seleccionar la imagen:", error);
+    }
+  };
+
   //Método para crear usuario
 
   const handleDataForm = async () => {
@@ -76,14 +130,18 @@ export const Home = ({ navigation }) => {
     console.log(departmentSelected);
     console.log(userName);
     console.log(userEmail);
+    console.log(userPassword);
+    console.log(selectedRole);
 
     try {
-      const url = "http://192.168.0.4:3000/api/v1/users/new-user";
+      const url = "http://192.168.0.6:3000/api/v1/users/new-user";
       const data = {
         user_name: userName,
         user_email: userEmail,
         gender: selectedIdRadioButton,
         address: departmentSelected,
+        user_password: userPassword,
+        user_role: selectedRole,
       };
 
       const response = await fetch(url, {
@@ -143,7 +201,7 @@ export const Home = ({ navigation }) => {
               <View style={styles.content}>
                 <View>
                   <Image
-                    source={require("../assets/images/png/logo.png")}
+                    source={require("../assets/images/jpg/logo.jpg")}
                     style={styles.logo}
                   />
                 </View>
@@ -174,6 +232,40 @@ export const Home = ({ navigation }) => {
                     onPress={(radioButtons) =>
                       setSelectedIdRadioButton(radioButtons[0])
                     }
+                  />
+                </View>
+
+                <TextInput
+                  placeholder="Contraseña"
+                  value={userPassword}
+                  onChangeText={(text) => setUserPassword(text)}
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                  style={styles.input}
+                  secureTextEntry={true}
+                />
+
+                <View>
+                  {avatar ? (
+                    <Image source={{ uri: avatar }} style={styles.avatar} />
+                  ) : (
+                    <Pressable
+                      onPress={selectAvatar}
+                      style={styles.selectAvatarButton}
+                    >
+                      <Text style={styles.selectAvatarButtonText}>
+                        Seleccionar Avatar
+                      </Text>
+                    </Pressable>
+                  )}
+                </View>
+
+                <Text>Seleccione el rol:</Text>
+                <View style={styles.radioGroupStyle}>
+                  <RadioGroup
+                    radioButtons={user_role}
+                    selectedId={selectedRole}
+                    onPress={(radioButtons) => setSelectedRole(radioButtons[0])}
                   />
                 </View>
 
@@ -345,5 +437,20 @@ const styles = StyleSheet.create({
     width: 100,
     height: 100,
     marginBottom: 20,
+  },
+  selectAvatarButton: {
+    backgroundColor: "#ffd33d",
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+  },
+  selectAvatarButtonText: {
+    fontSize: 16,
+    color: "black",
+  },
+  avatar: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
   },
 });
