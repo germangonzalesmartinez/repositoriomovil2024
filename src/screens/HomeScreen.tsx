@@ -4,6 +4,7 @@ import { Text, View } from "react-native";
 import axios from "axios";
 import { UserList } from "../components/users/UserList";
 import { SafeAreaView } from "react-native-safe-area-context";
+import clients from "../api/clients";
 
 export const HomeScreen = () => {
   const navigation = useNavigation();
@@ -13,8 +14,8 @@ export const HomeScreen = () => {
   const fetchUsers = async () => {
     try {
       setIsLoading(true);
-      const response = await axios.get("http://192.168.0.4:3000/api/v1/users");
-      console.log(response.data);
+      const response = await clients.get("/users");
+      console.log(response);
       setUsers(response.data);
     } catch (error) {
       console.log("Error", error);
@@ -32,7 +33,7 @@ export const HomeScreen = () => {
       <Text style={styles.title}>Usuarios</Text>
       <View style={styles.content}>
         {isLoading && <Text>Cargando</Text>}
-        {!isLoading && <UserList users={users} />}
+        {!isLoading && <UserList users={users} setUsers={setUsers} />}
       </View>
     </SafeAreaView>
   );
@@ -44,13 +45,13 @@ const styles = {
     backgroundColor: "#fff",
     padding: 10,
   },
-  content:{
+  content: {
     flex: 1,
   },
-  title:{
+  title: {
     fontSize: 18,
     fontWeight: "bold",
     textAlign: "center",
     textTransform: "uppercase",
-  }
+  },
 };
