@@ -1,24 +1,57 @@
-import { View, Text, StyleSheet } from "react-native";
-import React from "react";
-import { LinearGradient } from "expo-linear-gradient";
-import DrawerNavigator from "../navigators/DrawerNavigator";
+import { useNavigation } from "@react-navigation/native";
+import React, { useEffect, useState } from "react";
+import { Text, View } from "react-native";
+import { UserList } from "../components/users/UserList";
+import { SafeAreaView } from "react-native-safe-area-context";
+import clients from "../api/clients";
 
-export default function Contact() {
+export const Contact = () => {
+  const navigation = useNavigation();
+  const [users, setUsers] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const fetchUsers = async () => {
+    try {
+      setIsLoading(true);
+      const response = await clients.get("/users");
+      console.log(response);
+      setUsers(response.data);
+    } catch (error) {
+      console.log("Error", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchUsers();
+  }, []);
+
   return (
-    <LinearGradient
-      colors={["rgba(77, 0, 0, 0.8)", "rgba(0, 0, 0, 0.8)"]}
-      style={styles.background}
-    >
-      <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-        <Text>Contact</Text>
+    <SafeAreaView style={styles.container}>
+      <Text style={styles.title}>Usuarios</Text>
+      <View style={styles.content}>
+        {isLoading && <Text>Cargando</Text>}
+        {!isLoading && <UserList users={users} setUsers={setUsers} />}
       </View>
-    </LinearGradient>
+    </SafeAreaView>
   );
-}
+};
 
-const styles = StyleSheet.create({
-  background: {
+const styles = {
+  container: {
     flex: 1,
-    width: "100%",
+    backgroundColor: "#000",
+    padding: 10,
   },
-});
+  content: {
+    flex: 1,
+  },
+  title: {
+    fontSize: 18,
+    fontWeight: "bold",
+    textAlign: "center",
+    textTransform: "uppercase",
+    color: "orange",
+  },
+};

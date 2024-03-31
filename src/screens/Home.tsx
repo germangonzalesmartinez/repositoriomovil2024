@@ -90,70 +90,81 @@ export const Home = ({ navigation }) => {
     }
   };
 
-  // Función para la selección de la imagen
-  const selectAvatar = async () => {
-    try {
-      const permissionResult =
-        await ImagePicker.requestMediaLibraryPermissionsAsync();
+const selectAvatar = async () => {
+  try {
+    const permissionResult =
+      await ImagePicker.requestMediaLibraryPermissionsAsync();
 
-      if (!permissionResult.granted) {
-        alert(
-          "La aplicación necesita permisos para acceder a la galería de imágenes."
-        );
-        return;
-      }
-
-      const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        allowsEditing: true,
-        aspect: [1, 1],
-        quality: 1,
-      });
-
-      if (result.cancelled) {
-        console.log("Selección de imagen cancelada");
-        return;
-      }
-
-      if (result && result.uri) {
-        setAvatar(result.uri);
-      }
-    } catch (error) {
-      console.log("Error al seleccionar la imagen:", error);
+    if (!permissionResult.granted) {
+      alert(
+        "La aplicación necesita permisos para acceder a la galería de imágenes."
+      );
+      return;
     }
-  };
 
-  //Método para crear usuario
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 1,
+    });
+
+    console.log("Este es el resultado:", result);
+
+    if (result.cancelled) {
+      console.log("Selección de imagen cancelada");
+      return;
+    }
+
+    if (result.assets && result.assets.length > 0 && result.assets[0].uri) {
+      setAvatar(result.assets[0].uri);
+    } else {
+      console.log("No se pudo obtener la URI de la imagen seleccionada");
+    }
+  } catch (error) {
+    console.log("Error al seleccionar la imagen:", error);
+  }
+};
 
   const handleDataForm = async () => {
-    console.log(selectedIdRadioButton);
-    console.log(departmentSelected);
-    console.log(userName);
-    console.log(userEmail);
-    console.log(userPassword);
-    console.log(selectedRole);
 
     try {
       const url = "http://192.168.0.6:3000/api/v1/users/new-user";
-      const data = {
-        user_name: userName,
-        user_email: userEmail,
-        gender: selectedIdRadioButton,
-        address: departmentSelected,
-        user_password: userPassword,
-        user_role: selectedRole,
-      };
-
+  
+      const formData = new FormData();
+      formData.append("user_name", userName);
+      formData.append("user_email", userEmail);
+      formData.append("gender", selectedIdRadioButton);
+      formData.append("address", departmentSelected);
+      formData.append("user_password", userPassword);
+      formData.append("user_role", selectedRole);
+  
+      // Verifica si hay un avatar seleccionado
+      if (avatar) {
+        const localUri = avatar;
+        const filename = localUri.split("/").pop();
+  
+        // Inferir el tipo de archivo basado en la extensión del archivo
+        const match = /\.(\w+)$/.exec(filename);
+        const type = match ? `image/${match[1]}` : "image";
+  
+        // Crear un objeto File a partir de la URI local
+        const file = {
+          uri: localUri,
+          name: filename,
+          type: type,
+        };
+  
+        formData.append("avatar", file);
+      }
+  
       const response = await fetch(url, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
+        body: formData,
       });
-
+  
       const responseData = await response.json();
-
+  
       console.log(responseData);
       Alert.alert(
         "Registro Exitoso",
@@ -166,7 +177,7 @@ export const Home = ({ navigation }) => {
       navigation.navigate("TabNavigator");
     }
   };
-
+  
   return (
     <LinearGradient
       colors={["rgba(77, 0, 0, 0.8)", "rgba(0, 0, 0, 0.8)"]}
@@ -357,12 +368,12 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "bold",
     textAlign: "center",
-    marginTop: 30,
+    marginTop: 10,
   },
   closeModal: {
     position: "absolute",
-    top: 10,
-    right: 10,
+    top: 15,
+    right: 5,
     padding: 10,
   },
   textHome: {
@@ -418,7 +429,7 @@ const styles = StyleSheet.create({
   },
   pickerContainer: {
     width: "100%",
-    height: 200,
+    height: 80,
     borderRadius: 5,
     padding: 5,
     fontSize: 12,
@@ -430,12 +441,12 @@ const styles = StyleSheet.create({
   },
   pickerItemStyle: {
     fontFamily: "Helvetica",
-    fontSize: 12,
+    fontSize: 14,
     color: "#000",
   },
   logo: {
-    width: 100,
-    height: 100,
+    width: 70,
+    height: 70,
     marginBottom: 20,
   },
   selectAvatarButton: {

@@ -5,12 +5,9 @@ import { LESTERNERS } from "../utils/constants";
 import { ScreenIndicators } from "../components/ScreenIndicators";
 import PrimaryButton from "../components/PrimaryButton";
 import { LinearGradient } from "expo-linear-gradient";
-import { RootStackScreenProps } from "../navigators/MainNavigator";
 import SkipButton from "../components/SkipButton";
 
-export const Onboarding3 = ({
-  navigation,
-}: RootStackScreenProps<"Onboarding3">) => {
+export const Onboarding3 = ({ navigation }) => {
   return (
     <LinearGradient
       colors={["rgba(77, 0, 0, 0.8)", "rgba(0, 0, 0, 0.8)"]}
@@ -37,11 +34,11 @@ export const Onboarding3 = ({
           <View style={styles.buttonContainer}>
             <SkipButton
               label="Skip"
-              onPress={() => navigation.replace("TabNavigator")}
+              onPress={() => navigation.navigate("TabNavigator")}
             />
             <PrimaryButton
               label="Next"
-              onPress={() => navigation.replace("TabNavigator")}
+              onPress={() => navigation.navigate("TabNavigator")}
             />
           </View>
         </SafeAreaView>

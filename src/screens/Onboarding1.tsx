@@ -1,6 +1,5 @@
 import React from "react";
 import { Text, View, SafeAreaView, StyleSheet, Image } from "react-native";
-import { RootStackScreenProps } from "../navigators/MainNavigator";
 import { INTRO_SCREEN_01 } from "../utils/constants";
 import { LESTERNERS } from "../utils/constants";
 import { ScreenIndicators } from "../components/ScreenIndicators";
@@ -8,9 +7,7 @@ import PrimaryButton from "../components/PrimaryButton";
 import { LinearGradient } from "expo-linear-gradient";
 import SkipButton from "../components/SkipButton";
 
-export const Onboarding1 = ({
-  navigation,
-}: RootStackScreenProps<"Onboarding1">) => {
+export const Onboarding1 = ({ navigation }) => {
   return (
     <LinearGradient
       colors={["rgba(77, 0, 0, 0.8)", "rgba(0, 0, 0, 0.8)"]}
@@ -37,11 +34,11 @@ export const Onboarding1 = ({
           <View style={styles.buttonContainer}>
             <SkipButton
               label="Skip"
-              onPress={() => navigation.replace("TabNavigator")}
+              onPress={() => navigation.navigate("TabNavigator")}
             />
             <PrimaryButton
               label="Next"
-              onPress={() => navigation.replace("Onboarding2")}
+              onPress={() => navigation.navigate("Onboarding2")}
             />
           </View>
         </SafeAreaView>

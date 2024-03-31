@@ -1,6 +1,5 @@
 import React from "react";
 import { Text, StyleSheet, SafeAreaView, View, Image } from "react-native";
-import { RootStackScreenProps } from "../navigators/MainNavigator";
 import { INTRO_SCREEN_02 } from "../utils/constants";
 import { LESTERNERS } from "../utils/constants";
 import { ScreenIndicators } from "../components/ScreenIndicators";
@@ -8,9 +7,7 @@ import PrimaryButton from "../components/PrimaryButton";
 import { LinearGradient } from "expo-linear-gradient";
 import SkipButton from "../components/SkipButton";
 
-export const Onboarding2 = ({
-  navigation,
-}: RootStackScreenProps<"Onboarding2">) => {
+export const Onboarding2 = ({ navigation }) => {
   return (
     <LinearGradient
       colors={["rgba(77, 0, 0, 0.8)", "rgba(0, 0, 0, 0.8)"]}

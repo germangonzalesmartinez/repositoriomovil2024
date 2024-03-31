@@ -11,28 +11,9 @@ import { LinearGradient } from "expo-linear-gradient";
 import { launchCamera, launchImageLibrary } from "react-native-image-picker";
 
 export const Information = ({ navigation }) => {
-  const [selectImage, setSelectImage] = useState("");
+  const [selectedImage, setSelectedImage] = useState("");
 
-  const handlePress = () => {
-    navigation.navigate("ApleMusic");
-  };
-
-  const ImagePicker = () => {
-    const options = {
-      mediaType: "photo",
-      quality: 1,
-    };
-
-    launchImageLibrary(options, (response) => {
-      if (!response.didCancel && !response.errorCode) {
-        setSelectImage(response.assets[0].uri);
-      } else {
-        console.log("La selección de la imagen fue cancelada o hubo un error.");
-      }
-    });
-  };
-
-  const LaunchCamera = () => {
+  const launchCameraAndTakePhoto = () => {
     const options = {
       mediaType: "photo",
       quality: 1,
@@ -40,24 +21,12 @@ export const Information = ({ navigation }) => {
 
     launchCamera(options, (response) => {
       if (!response.didCancel && !response.errorCode) {
-        setSelectImage(response.assets[0].uri);
+        setSelectedImage(response.assets[0].uri);
       } else {
         console.log("La captura de la imagen fue cancelada o hubo un error.");
       }
     });
   };
-
-  //   let options = {
-  //     storageOptions: {
-  //       path: "image",
-  //     },
-  //   };
-
-  //   launchImageLibrary(options, (response) => {
-  //     setselectImage(response.assets[0].uri);
-  //     console.log(response.uri);
-  //   });
-  // };
 
   return (
     <LinearGradient
@@ -68,30 +37,14 @@ export const Information = ({ navigation }) => {
         <SafeAreaView>
           <View style={styles.imageContainer}>
             <Image
-              source={{ uri: selectImage }} // ajusta la ruta de la imagen según sea necesario
+              source={selectedImage ? { uri: selectedImage } : null}
               style={styles.image}
             />
           </View>
-          <TouchableOpacity style={styles.button} onPress={handlePress}>
-            <Text style={{ color: "#fff", fontSize: 16, fontWeight: "600" }}>
-              Ir a ApleMusic
-            </Text>
-          </TouchableOpacity>
+
           <TouchableOpacity
             style={styles.button}
-            onPress={({}) => {
-              ImagePicker();
-            }}
-          >
-            <Text style={{ color: "#fff", fontSize: 16, fontWeight: "600" }}>
-              Ir galeria
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={({}) => {
-              LaunchCamera();
-            }}
+            onPress={launchCameraAndTakePhoto}
           >
             <Text style={{ color: "#fff", fontSize: 16, fontWeight: "600" }}>
               Tomar foto

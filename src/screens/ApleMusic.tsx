@@ -23,10 +23,6 @@ export default function ApleMusic({ navigation }) {
     setIsOpen(true);
   }, []);
 
-  const handleNavigate = () => {
-    navigation.navigate("TabNavigator"); // Navega a la otra pantalla
-  };
-
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <View style={styles.container}>
@@ -52,11 +48,6 @@ export default function ApleMusic({ navigation }) {
           >
             <Text style={{ color: "#fff", fontSize: 16, fontWeight: "600" }}>
               GET
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.button} onPress={handleNavigate}>
-            <Text style={{ color: "#fff", fontSize: 16, fontWeight: "600" }}>
-              Volver
             </Text>
           </TouchableOpacity>
         </LinearGradient>

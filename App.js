@@ -1,7 +1,6 @@
 import React from "react";
 import { SafeAreaView, StyleSheet } from "react-native";
-import { MainNavigator } from "./src/navigators/MainNavigator";
-import { NavigationContainer } from "@react-navigation/native";
+import MainNavigator from "./src/navigators/MainNavigator";
 import { StatusBar } from "expo-status-bar";
 import { LinearGradient } from "expo-linear-gradient";
 
@@ -12,9 +11,7 @@ export default function App() {
         colors={["rgba(77, 0, 0, 0.8)", "rgba(0, 0, 0, 0.8)"]}
         style={StyleSheet.absoluteFill}
       />
-      <NavigationContainer>
-        <MainNavigator />
-      </NavigationContainer>
+      <MainNavigator />
       <StatusBar
         style="light"
         backgroundColor="transparent"
