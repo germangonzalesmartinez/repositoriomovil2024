@@ -2,11 +2,11 @@ import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { createDrawerNavigator } from "@react-navigation/drawer";
 import {
+  DrawerContentScrollView,
   DrawerItemList,
-  createDrawerNavigator,
 } from "@react-navigation/drawer";
-import { DrawerContentScrollView } from "@react-navigation/drawer";
 import { SimpleLineIcons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { Onboarding1 } from "../screens/Onboarding1";
 import { Onboarding2 } from "../screens/Onboarding2";
@@ -16,7 +16,6 @@ import { Information } from "../screens/Information";
 import { Contact } from "../screens/Contact";
 import ApleMusic from "../screens/ApleMusic";
 import Settings from "../screens/Settings";
-import { Ionicons } from "@expo/vector-icons";
 import Icon from "react-native-vector-icons/FontAwesome5";
 
 const Tab = createBottomTabNavigator();
@@ -33,10 +32,10 @@ const DrawerContent = (props) => {
 
 const DrawerNavigator = () => {
   return (
-    <Drawer.Navigator initialRouteName="Home" drawerContent={DrawerContent}>
+    <Drawer.Navigator drawerContent={(props) => <DrawerContent {...props} />}>
       <Drawer.Screen
         name="Inicio"
-        component={Home}
+        component={TabNavigator}
         options={{
           drawerIcon: ({ color, size }) => (
             <SimpleLineIcons name="home" size={size} color={color} />
@@ -44,12 +43,12 @@ const DrawerNavigator = () => {
         }}
       />
       <Drawer.Screen
-        name="Contacto"
+        name="Usuarios"
         component={Contact}
         options={{
           drawerIcon: ({ color, size }) => (
             <MaterialCommunityIcons
-              name="message-alert-outline"
+              name="account-group"
               size={size}
               color={color}
             />
@@ -113,7 +112,6 @@ const TabNavigator = () => {
           tabBarIcon: ({ color, size }) => (
             <Icon name="home" color={color} size={size} />
           ),
-          headerShown: false,
         }}
       />
       <Tab.Screen
@@ -123,7 +121,6 @@ const TabNavigator = () => {
           tabBarIcon: ({ color, size }) => (
             <Icon name="camera" color={color} size={size} />
           ),
-          headerShown: false,
         }}
       />
       <Tab.Screen
@@ -133,7 +130,6 @@ const TabNavigator = () => {
           tabBarIcon: ({ color, size }) => (
             <Icon name="user" color={color} size={size} />
           ),
-          headerShown: false,
         }}
       />
       <Tab.Screen
@@ -143,7 +139,6 @@ const TabNavigator = () => {
           tabBarIcon: ({ color, size }) => (
             <Icon name="music" color={color} size={size} />
           ),
-          headerShown: false,
         }}
       />
       <Tab.Screen
@@ -163,11 +158,10 @@ const TabNavigator = () => {
 export default function MainNavigator() {
   return (
     <NavigationContainer>
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="OnboardingStack" component={OnboardingStack} />
-        <Stack.Screen name="TabNavigator" component={TabNavigator} />
-        <Stack.Screen name="DrawerNavigator" component={DrawerNavigator} />
-      </Stack.Navigator>
+      <Drawer.Navigator screenOptions={{ headerShown: false }}>
+        <Drawer.Screen name="OnboardingStack" component={OnboardingStack} />
+        <Drawer.Screen name="TabNavigator" component={DrawerNavigator} />
+      </Drawer.Navigator>
     </NavigationContainer>
   );
 }
