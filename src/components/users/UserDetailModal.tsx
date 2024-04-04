@@ -1,7 +1,14 @@
 import React from "react";
-import { Modal, StyleSheet, Text, View } from "react-native";
+import { Modal, StyleSheet, Text, View, TouchableOpacity } from "react-native";
 
-export const UserDetailModal = ({ visible, closeModal, userId }) => {
+export const UserDetailModal = ({
+  visible,
+  closeModal,
+  userId,
+  userName,
+  userEmail,
+  userAddress,
+}) => {
   return (
     <Modal
       animationType="slide"
@@ -11,7 +18,14 @@ export const UserDetailModal = ({ visible, closeModal, userId }) => {
     >
       <View style={styles.centeredView}>
         <View style={styles.modalView}>
-          <Text>{userId}</Text>
+          <Text>ID: {userId}</Text>
+          <Text>Nombre: {userName}</Text>
+          <Text>Correo electrónico: {userEmail}</Text>
+          <Text>Dirección: {userAddress}</Text>
+          {/* Puedes agregar más campos según tus necesidades */}
+          <TouchableOpacity onPress={closeModal}>
+            <Text style={{ color: "orange", marginTop: 10 }}>Cerrar</Text>
+          </TouchableOpacity>
         </View>
       </View>
     </Modal>

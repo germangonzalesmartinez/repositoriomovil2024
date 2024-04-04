@@ -5,6 +5,7 @@ import clients from "../../api/clients";
 import { TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { UserDetailModal } from "./UserDetailModal";
+import { UserEditModal } from "./UserEditModal";
 
 // Constants
 const BASE_URL = "http://192.168.0.6:3000";
@@ -17,6 +18,9 @@ export const UserList = ({ users, setUsers }) => {
   const [userSwitchState, setUserSwitchState] = useState({});
   const [selectUserId, setSelectUserId] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
+  const [selectedUserDetails, setSelectedUserDetails] = useState(null);
+  const [editModalVisible, setEditModalVisible] = useState(false);
+  const [editingUser, setEditingUser] = useState(null);
 
   useEffect(() => {
     const initialSwitchState = {};
@@ -57,10 +61,14 @@ export const UserList = ({ users, setUsers }) => {
   };
 
   const handleDetailUser = async (userId) => {
-    setSelectUserId(userId);
-    setModalVisible(true);
+    // Buscar el usuario seleccionado en la lista de usuarios
+    const userDetails = users.find((user) => user._id === userId);
+    if (userDetails) {
+      setSelectedUserDetails(userDetails);
+      setSelectUserId(userId);
+      setModalVisible(true);
+    }
   };
-
   const handleDeleteUser = async (userId) => {
     Alert.alert(
       "Confirmar eliminación",
@@ -75,14 +83,13 @@ export const UserList = ({ users, setUsers }) => {
           text: "Eliminar",
           onPress: async () => {
             try {
-            
               // Realizar la solicitud para eliminar el usuario
               await clients.delete(`/users/remove/${userId}`);
-              
+
               // Actualizar la lista de usuarios después de eliminar
-              const updatedUsers = users.filter(user => user._id !== userId);
+              const updatedUsers = users.filter((user) => user._id !== userId);
               setUsers(updatedUsers);
-              
+
               // Opcional: Mostrar mensaje de éxito
               Alert.alert("Usuario eliminado correctamente");
             } catch (error) {
@@ -90,7 +97,6 @@ export const UserList = ({ users, setUsers }) => {
               // Opcional: Mostrar mensaje de error
               Alert.alert("Error al eliminar usuario");
             } finally {
-           
             }
           },
         },
@@ -98,7 +104,65 @@ export const UserList = ({ users, setUsers }) => {
     );
   };
 
+  const handleEditUser = (user) => {
+    console.log("Usuario seleccionado para editar:", user);
+    setEditingUser(user);
+    setEditModalVisible(true);
+  };
 
+  const closeModal = () => {
+    // Lógica para cerrar el modal
+    setEditModalVisible(false); // Por ejemplo, si estás utilizando un estado para manejar la visibilidad del modal
+  };
+
+  const handleSaveUser = async (userData) => {
+    try {
+      if (!userData.userId) {
+        console.error("ID de usuario no válido:", userData.userId);
+        return;
+      }
+      const response = await clients.patch(`/users/edit/${userData.userId}`, {
+        user_name: userData.name,
+        user_email: userData.email,
+        user_role: userData.role,
+      });
+
+      console.log("Response:", response);
+
+      if (
+        response &&
+        response.data &&
+        response.data.message === "User updated"
+      ) {
+        const updatedUsers = users.map((user) =>
+          user._id === userData.userId
+            ? {
+                ...user,
+                user_name: userData.name,
+                user_email: userData.email,
+                user_role: userData.role,
+              }
+            : user
+        );
+        setUsers(updatedUsers);
+        Alert.alert("¡Datos del usuario actualizados correctamente!");
+        closeModal();
+      } else {
+        console.error(
+          "Error al actualizar los datos del usuario. Detalles de la respuesta:",
+          response
+        );
+        Alert.alert(
+          "Error al actualizar los datos del usuario. Inténtalo de nuevo más tarde."
+        );
+      }
+    } catch (error) {
+      console.error("Error al actualizar los datos del usuario:", error);
+      Alert.alert(
+        "Error al actualizar los datos del usuario. Inténtalo de nuevo más tarde."
+      );
+    }
+  };
 
   const renderUserItem = ({ item }) => (
     <ListItem bottomDivider style={styles.listItem}>
@@ -116,9 +180,11 @@ export const UserList = ({ users, setUsers }) => {
         <ListItem.Subtitle style={styles.subtitle}>
           {item.user_email}
         </ListItem.Subtitle>
-        {item.user_role && (
+        {/* {item.user_role && (
           <ListItem.Subtitle>{item.user_role}</ListItem.Subtitle>
         )}
+        {item.gender && <ListItem.Subtitle>{item.gender}</ListItem.Subtitle>} */}
+        {item.address && <ListItem.Subtitle style={styles.subtitle}>{item.address}</ListItem.Subtitle>}
       </ListItem.Content>
 
       <View style={styles.switchContainer}>
@@ -134,6 +200,9 @@ export const UserList = ({ users, setUsers }) => {
       <View style={styles.actionsContainer}>
         <TouchableOpacity onPress={() => handleDetailUser(item._id)}>
           <Ionicons name="search-outline" size={22} color="black" />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => handleEditUser(item)}>
+          <Ionicons name="create-outline" size={22} color="black" />
         </TouchableOpacity>
         <TouchableOpacity onPress={() => handleDeleteUser(item._id)}>
           <Ionicons name="trash-outline" size={22} color="black" />
@@ -152,8 +221,20 @@ export const UserList = ({ users, setUsers }) => {
       />
       <UserDetailModal
         visible={modalVisible}
-        closeModal={() => setModalVisible(false)}
+        closeModal={() => setEditModalVisible(false)}
         userId={selectUserId}
+        userName={selectedUserDetails ? selectedUserDetails.user_name : ""}
+        userEmail={selectedUserDetails ? selectedUserDetails.user_email : ""}
+        userAddress={selectedUserDetails ? selectedUserDetails.address : ""}
+      />
+      <UserEditModal
+        visible={editModalVisible}
+        closeModal={() => setEditModalVisible(false)}
+        userId={editingUser ? editingUser._id : ""}
+        userName={editingUser ? editingUser.user_name : ""}
+        userEmail={editingUser ? editingUser.user_email : ""}
+        userRole={editingUser ? editingUser.user_role : ""}
+        onSave={handleSaveUser}
       />
     </>
   );
@@ -178,7 +259,7 @@ const styles = StyleSheet.create({
   },
 
   title: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: "bold",
   },
   subtitle: {
