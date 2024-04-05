@@ -68,6 +68,7 @@ export const UserList = ({ users, setUsers }) => {
       setSelectUserId(userId);
       setModalVisible(true);
     }
+   
   };
   const handleDeleteUser = async (userId) => {
     Alert.alert(
@@ -184,7 +185,11 @@ export const UserList = ({ users, setUsers }) => {
           <ListItem.Subtitle>{item.user_role}</ListItem.Subtitle>
         )}
         {item.gender && <ListItem.Subtitle>{item.gender}</ListItem.Subtitle>} */}
-        {item.address && <ListItem.Subtitle style={styles.subtitle}>{item.address}</ListItem.Subtitle>}
+        {item.address && (
+          <ListItem.Subtitle style={styles.subtitle}>
+            {item.address}
+          </ListItem.Subtitle>
+        )}
       </ListItem.Content>
 
       <View style={styles.switchContainer}>
@@ -221,7 +226,7 @@ export const UserList = ({ users, setUsers }) => {
       />
       <UserDetailModal
         visible={modalVisible}
-        closeModal={() => setEditModalVisible(false)}
+        closeModal={() => setModalVisible(false)}
         userId={selectUserId}
         userName={selectedUserDetails ? selectedUserDetails.user_name : ""}
         userEmail={selectedUserDetails ? selectedUserDetails.user_email : ""}

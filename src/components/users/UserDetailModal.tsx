@@ -22,7 +22,6 @@ export const UserDetailModal = ({
           <Text>Nombre: {userName}</Text>
           <Text>Correo electrónico: {userEmail}</Text>
           <Text>Dirección: {userAddress}</Text>
-          {/* Puedes agregar más campos según tus necesidades */}
           <TouchableOpacity onPress={closeModal}>
             <Text style={{ color: "orange", marginTop: 10 }}>Cerrar</Text>
           </TouchableOpacity>
